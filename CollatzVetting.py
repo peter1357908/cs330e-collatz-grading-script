@@ -39,12 +39,12 @@ for filename in glob.glob(submissions_path):
 			data = json.load(f)['Project #1']
 			gitlab_username = data['GitLab Username']
 			emails[gitlab_username] = {
-			'email_1': data['Member #1 E-mail'],
-			'email_2': data['Member #2 E-mail'],
-			'eid_1': data['Member #1 EID'].lower(),
-			'eid_2': data['Member #2 EID'].lower(),
-			'contents': ''
-		}
+				'email_1': data['Member #1 E-mail'],
+				'email_2': data['Member #2 E-mail'],
+				'eid_1': data['Member #1 EID'].lower(),
+				'eid_2': data['Member #2 EID'].lower(),
+				'contents': ''
+			}
 		except:
 			print('Invalid json for ' + filename)
 			with open(output_path + '/invalidJson.txt', 'a') as f:
@@ -57,7 +57,7 @@ for filename in glob.glob(submissions_path):
 		
 		try:
 			gitlab_url = data['GitLab URL']
-			clone_url = gitlab_url.replace('https://gitlab.com/','git@gitlab.com:').replace('http://gitlab.com/','git@gitlab.com:')
+			clone_url = gitlab_url.replace('https://gitlab.com/', 'git@gitlab.com:').replace('http://gitlab.com/', 'git@gitlab.com:')
 			if clone_url[-1] == '/':
 				clone_url = clone_url[:-1]
 			if clone_url[-4:] != '.git':
@@ -192,7 +192,12 @@ existing_filenames = list(map(lambda filename: filename.lower(), os.listdir()))
 
 for gitlab_username in gitlab_usernames:
 	print('Checking test repo files for ' + gitlab_username)
-	filenames = [gitlab_username + '-RunCollatz.in', gitlab_username + '-RunCollatz.out', gitlab_username + '-TestCollatz.py', gitlab_username + '-TestCollatz.out']
+	filenames = [
+		gitlab_username + '-RunCollatz.in',
+		gitlab_username + '-RunCollatz.out',
+		gitlab_username + '-TestCollatz.py',
+		gitlab_username + '-TestCollatz.out'
+	]
 	for filename in filenames:
 		if filename.lower() not in existing_filenames:
 			print(filename + ' not found in test repo')
