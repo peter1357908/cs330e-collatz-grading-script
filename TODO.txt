@@ -1,0 +1,8 @@
+check for empty JSON files
+
+
+Send emails automatically'
+
+
+
+Ignore helper functions (honestly just hard-check that there are 12 tests, since there are a fixed number (4) of the non-helper functions.)

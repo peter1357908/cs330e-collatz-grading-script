@@ -96,7 +96,7 @@ def check_required_files(gitlab_username):
 	for item in required_files:
 		if item not in glob.glob(item):
 			numNotFound += 1
-			notFoundMessage = item + ' not found in repo'
+			notFoundMessage = item + ' not found in repo\n'
 			print(notFoundMessage)
 			emails[gitlab_username]['contents'] += notFoundMessage
 	if numNotFound > len(required_files) / 2:
@@ -211,8 +211,8 @@ for email in emails.values():
 	with open('resubmitRequests.txt', 'a') as r:
 		r.write(email['eid_1'] + ' and ' + email['eid_2'] + ' requested to resubmit\n')
 	with open('email_output.txt', 'a') as o:
-		o.write(email['email_1'] + ', ' + email['email_2'] + '\n')
-		o.write('Hello,\n\nYou had the following errors in your Collatz submission:\n' + email['contents'] + '\nPlease resubmit within 24 hours for a 20% late penalty and message/email me when you have resubmitted.\n\nThanks,\n\nPeter\n\n')
+		o.write(email['email_1'] + '; ' + email['email_2'] + '\n')
+		o.write('Hello,\n\nYou had the following errors in your Collatz submission:\n' + email['contents'] + '\nPlease resubmit within 24 hours for a 20% late penalty and message/email me when you have resubmitted.\n\nThanks,\nPeter\n\n')
 
 chdir(base_path)
 
