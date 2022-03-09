@@ -3,7 +3,6 @@ import glob
 import json
 import subprocess
 import time
-import requests
 
 # must be absolute path; assuming running in Git Bash on Windows
 # make sure to run after `make clean`
@@ -45,10 +44,10 @@ for filename in glob.glob(submissions_path):
 				'eid_2': data['Member #2 EID'].lower(),
 				'contents': ''
 			}
-		except:
+		except Exception as e:
 			print('Invalid json for ' + filename)
 			with open(output_path + '/invalidJson.txt', 'a') as f:
-				f.write(filename + ' is invalid json\n')
+				f.write(filename + ' is invalid json\n' + str(e) + '\n\n')
 			continue
 		
 		# construct the `.git` string from the GitLab URL; if any part failed,
@@ -75,6 +74,12 @@ for filename in glob.glob(submissions_path):
 		chdir('..')
 
 gitlab_usernames = submissions.keys()
+
+# load our "answer key" for the acceptance tests
+with open(base_path + '/RunCollatz.out') as file:
+    collatzAnswerKey = file.read().splitlines()
+
+numAcceptanceTests = len(collatzAnswerKey)
 
 # HELPER FUNCTIONS START HERE
 # =======================================================
@@ -155,10 +160,52 @@ def checkAcceptanceTests(gitlab_username):
 		p = subprocess.Popen(['python', 'RunCollatz.py'], stdin=stdin, stdout=stdout)
 		p.wait(timeout=150)
 	except subprocess.TimeoutExpired as e:
-		print('Timeout')
-		emails[gitlab_username]['contents'] += 'Program timed out on RunCollatz.in\n'
+		p.kill()
+		p.communicate()
+		print('Student Acceptance Tests Timeout')
+		emails[gitlab_username]['contents'] += 'RunCollatz.in timed out on students\' acceptance tests (more than 150 seconds)\n'
 	except Exception as e:
-		emails[gitlab_username]['contents'] += 'Runtime Exception: ' + e + '\n'
+		emails[gitlab_username]['contents'] += 'Runtime Exception during students\' acceptance tests: ' + str(e) + '\n'
+	print('Execution time (s): ' + str(time.time() - start_time))
+
+
+# run our own Acceptance Test
+def runOurAcceptanceTests(gitlab_username):
+	print('Running our own acceptance tests for ' + gitlab_username)
+	if 'RunCollatz.in' not in glob.glob('RunCollatz.in'):
+		return
+	if 'RunCollatz.py' not in glob.glob('RunCollatz.py'):
+		return
+		
+	# try running the acceptance test
+	stdin = open(base_path + '/RunCollatz.in', 'r')
+	start_time = time.time()
+	
+	try:
+		p = subprocess.Popen(['python', 'RunCollatz.py'], stdin=stdin, stdout=subprocess.PIPE)
+		# p.wait(timeout=60)
+		stdout, _ = p.communicate(timeout=60)
+		
+		# read the output into a variable directly
+		collatzOutput = stdout.decode('cp437').splitlines()
+		
+		numFailedAcceptanceTests = 0
+		for i in range(numAcceptanceTests):
+			if collatzOutput[i] != collatzAnswerKey[i]:
+				# print('mismatch!!! Index is: ' + str(i))
+				# print(repr(collatzOutput[i]))
+				# print(repr(collatzAnswerKey[i]))
+				numFailedAcceptanceTests += 1
+		
+		if numFailedAcceptanceTests > 0:
+			emails[gitlab_username]['contents'] += 'Number of Graders\' acceptance tests failed: ' + str(numFailedAcceptanceTests) + '\n'
+	except subprocess.TimeoutExpired as e:
+		p.kill()
+		p.communicate()
+		print('Grader Acceptance Tests Timeout')
+		emails[gitlab_username]['contents'] += 'RunCollatz.in timed out on the graders\' acceptance tests (more than 60 seconds)\n'
+	except Exception as e:
+		emails[gitlab_username]['contents'] += 'Runtime Exception during graders\' acceptance tests: ' + str(e) + '\n'
 	print('Execution time (s): ' + str(time.time() - start_time))
 
 
@@ -181,6 +228,7 @@ for gitlab_username in gitlab_usernames:
 	check_required_files(gitlab_username)
 	checkUnitTests(gitlab_username)
 	checkAcceptanceTests(gitlab_username)
+	runOurAcceptanceTests(gitlab_username)
 	
 	chdir(base_path + '/repos')
 
