@@ -5,3 +5,10 @@ Send emails automatically
 
 
 Ignore helper functions (honestly just hard-check that there are 12 tests, since there are a fixed number (4) of the non-helper functions.)
+
+
+Record student EIDs and group number in email message (for grading)
+
+
+Check unit test results (all dots no F's)
+
