@@ -6,7 +6,7 @@ import time
 
 # `base_path` must be absolute path; assuming running in Git Bash on Windows
 # make sure to run after `make clean`
-base_path = 'D:/Libraries Type-D/Documents/SCHOOL/UT Austin/Spring 2022/CS 330E Elements of Software Engineering (TA)/Projects/collatz'
+base_path = 'D:/Libraries Type-D/Documents/SCHOOL/UT Austin/Spring 2022/CS 330E Elements of Software Engineering (TA)/Projects/cs330e-collatz-grading-script'
 output_path = 'output'
 output_filename = 'bad_cooperation_list.txt'
 submissions_path = 'evaluation_submissions/*.json'

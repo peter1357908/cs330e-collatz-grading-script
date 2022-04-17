@@ -6,7 +6,7 @@ import time
 
 # must be absolute path; assuming running in Git Bash on Windows
 # make sure to run after `make clean`
-base_path = 'D:/Libraries Type-D/Documents/SCHOOL/UT Austin/Spring 2022/CS 330E Elements of Software Engineering (TA)/Projects/collatz'
+base_path = 'D:/Libraries Type-D/Documents/SCHOOL/UT Austin/Spring 2022/CS 330E Elements of Software Engineering (TA)/Projects/cs330e-collatz-grading-script'
 output_path = base_path + '/output'
 required_files = ['makefile', 'Collatz.py', 'RunCollatz.py', 'RunCollatz.in', 'RunCollatz.out', 'TestCollatz.py', 'TestCollatz.out', 'Collatz.html', 'Collatz.log']
 optional_file = 'SphereCollatz.py'
